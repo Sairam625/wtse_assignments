@@ -1,0 +1,56 @@
+ELECTRICITY BILL SYSTEM - CODE GUIDE
+======================================
+
+This file lists the locations of all major components and logic in the project.
+
+1. FRONTEND (The User Interface)
+--------------------------------
+Location: client/
+
+*   All Visual Logic & Payments:
+    Path: client/src/components/ElectricityBill.jsx
+    - Contains the entire Step-by-Step Payment Flow.
+    - Contains the "Lightning Icon" SVG code.
+    - Contains the Receipt and Success Screen logic.
+    - Contains the API call to the backend.
+
+*   Styling & Themes (Colors, Fonts, Layout):
+    Path: client/src/index.css
+    - Contains all CSS variables (Neon colors, Dark Theme).
+    - Contains styles for the Glassmorphism effects.
+    - Contains the "PowerPay" header styling.
+
+*   Main App Entry:
+    Path: client/src/App.jsx
+    - Loads the ElectricityBill component.
+
+*   Proxy Configuration (Connecting to Backend):
+    Path: client/vite.config.js
+    - Configures the forwarded requests to port 5001.
+
+2. BACKEND (The Server & Database)
+----------------------------------
+Location: server/
+
+*   Main Server File:
+    Path: server/index.js
+    - Starts the Express server.
+    - Connects to MongoDB.
+    - Sets the PORT (currently 5001).
+
+*   Payment Logic (API Routes):
+    Path: server/routes/payment.js
+    - Defines the POST /api/paybill endpoint.
+    - Receives data from frontend (Consumer Name, ID, Plan, etc.).
+    - Calculates the total cost.
+    - Saves the bill to the database.
+
+*   Database Schema (Structure):
+    Path: server/models/Bill.js
+    - Defines how a "Bill" is stored in MongoDB.
+    - Fields: consumerId, consumerName, planName, unitsUsed, totalCost, etc.
+
+-------------------------------------------------------------------------
+COMMANDS TO RUN THE PROJECT:
+1. Start Server: cd server && npm run dev
+2. Start Client: cd client && npm run dev
