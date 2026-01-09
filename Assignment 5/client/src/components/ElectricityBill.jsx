@@ -25,6 +25,7 @@ const ElectricityBill = () => {
     const [error, setError] = useState('');
     const [estimatedCost, setEstimatedCost] = useState(0);
     const [paymentMethod, setPaymentMethod] = useState('');
+    const [sessionBills, setSessionBills] = useState([]);
 
     const handlePlanSelect = (plan) => {
         setSelectedPlan(plan);
@@ -61,6 +62,18 @@ const ElectricityBill = () => {
             });
             console.log('Payment Response:', response.data);
             setBillDetails(response.data.data);
+
+            // Add to session history
+            const newTxn = {
+                id: `TXN-${Math.floor(Math.random() * 1000000)}`,
+                consumer: consumerName,
+                plan: selectedPlan.name,
+                amount: estimatedCost,
+                date: new Date().toLocaleTimeString(),
+                method: paymentMethod
+            };
+            setSessionBills(prev => [newTxn, ...prev]);
+
             setStep(4);
         } catch (err) {
             console.error('Payment Error:', err);
@@ -95,7 +108,7 @@ const ElectricityBill = () => {
                     >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '15px', marginBottom: '2rem' }}>
                             <LightningIcon />
-                            <h1 style={{ margin: 0, background: 'none', WebkitTextFillColor: 'initial', color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.5)' }}>PowerPay</h1>
+                            <h1 style={{ margin: 0, background: 'none', WebkitTextFillColor: 'initial', color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.5)', fontSize: '2rem' }}>HESCOM ELECTRICITY BILL PAYMENT</h1>
                         </div>
 
                         <h2 style={{ justifyContent: 'center' }}>Select Your Energy Plan</h2>
@@ -252,7 +265,7 @@ const ElectricityBill = () => {
                         <div className="receipt">
                             <div className="receipt-header">
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <LightningIcon /> POWER PAY RECEIPT
+                                    <LightningIcon /> HESCOM RECEIPT
                                 </span>
                                 <span style={{ fontSize: '0.8rem', opacity: 0.8 }}>{new Date().toLocaleDateString()}</span>
                             </div>
@@ -284,6 +297,51 @@ const ElectricityBill = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* SESSION HISTORY TABLE */}
+            {sessionBills.length > 0 && (
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="history-section"
+                    style={{ marginTop: '3rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem' }}
+                >
+                    <h3 style={{ color: '#fff', textAlign: 'center', marginBottom: '1.5rem' }}>Recent Transactions (This Session)</h3>
+                    <div className="history-table-container">
+                        <table className="history-table" style={{ width: '100%', borderCollapse: 'collapse', color: '#cbd5e1' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'left' }}>
+                                    <th style={{ padding: '10px' }}>Time</th>
+                                    <th style={{ padding: '10px' }}>Consumer</th>
+                                    <th style={{ padding: '10px' }}>Plan</th>
+                                    <th style={{ padding: '10px' }}>Amount</th>
+                                    <th style={{ padding: '10px' }}>Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sessionBills.map((bill, index) => (
+                                    <tr key={index} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <td style={{ padding: '10px' }}>{bill.date}</td>
+                                        <td style={{ padding: '10px' }}>{bill.consumer}</td>
+                                        <td style={{ padding: '10px' }}>{bill.plan}</td>
+                                        <td style={{ padding: '10px', color: 'var(--neon-yellow)' }}>₹{bill.amount}</td>
+                                        <td style={{ padding: '10px' }}>
+                                            <span style={{
+                                                fontSize: '0.8rem',
+                                                padding: '4px 8px',
+                                                borderRadius: '12px',
+                                                background: 'rgba(255,255,255,0.1)'
+                                            }}>
+                                                {bill.method}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </motion.div>
+            )}
         </div>
     );
 };
